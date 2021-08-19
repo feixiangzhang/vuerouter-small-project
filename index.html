@@ -21,15 +21,15 @@
 						<main>
 							<aside class="mainList">
 								<ul>
-									<li>用户管理</li>
-									<li>权限管理</li>
-									<li>商品管理</li>
-									<li>订单管理</li>
-									<li>系统设置</li>
+									<li><router-link to="/users">用户管理</router-link></li>
+									<li><router-link to="/rights">权限管理</router-link></li>
+									<li><router-link to="/goods">商品管理</router-link></li>
+									<li><router-link to="/orders">订单管理</router-link></li>
+									<li><router-link to="/settings">系统设置</router-link></li>
 								</ul>
 							</aside>
 							<section class="mainContent">
-								<div>添加用户表单</div>
+								<router-view></router-view>
 							</section>
 						</main>
 						<footer>
@@ -38,9 +38,98 @@
 					</div>
 				`
 			}
+			const Users = {
+				data() {
+					return {
+						userList: [
+							{id: 1, name: 'Jack', age: 23},
+							{id: 2, name: 'Tom', age: 13},
+							{id: 3, name: 'Rose', age: 28},
+							{id: 4, name: 'Mary', age: 18},
+							{id: 5, name: 'LiLei', age: 19}
+						]
+					}
+				},
+				template: `
+				<div>
+					<h3>用户管理页面</h3>
+					<table>
+						<thead>
+							<tr>
+								<th>编号</th><th>姓名</th><th>年龄</th><th>详情</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in userList" :key="item.id">
+								<td>{{item.id}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.age}}</td>
+								<td>
+									<a href="javascript:;" @click="goDetail(item.id)">查看详情</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				`,
+				methods: {
+					goDetail: function(id) {
+						this.$router.push('/details/' + id);
+					}
+				}
+			}
+			const Rights = {
+				template: `
+				<div>
+					权限管理页面
+				</div>
+				`
+			}
+			const Goods = {
+				template: `
+				<div>
+					商品管理页面
+				</div>
+				`
+			}
+			const Orders = {
+				template: `
+				<div>
+					订单管理页面
+				</div>
+				`
+			}
+			const Settings = {
+				template: `
+				<div>
+					系统设置页面
+				</div>
+				`
+			}
+			const Details = {
+				props: ['id'],
+				template: `
+					<div>
+						<h4>详情页面 -- 用户id: {{id}}</h4>
+						<button class="btn goBack" @click="goBack">返回</button>
+					</div>
+				`,
+				methods: {
+					goBack() {
+						this.$router.go(-1);
+					}
+				}
+			}
 			const router = new VueRouter({
 				routes: [
-					{path: '/', component: App}
+					{path: '/', component: App, redirect: '/users', children: [
+						{path: '/users', component: Users},
+						{path: '/rights', component: Rights},
+						{path: '/goods', component: Goods},
+						{path: '/orders', component: Orders},
+						{path: '/settings', component: Settings},
+						{path: '/details/:id', component: Details, props: true}
+					]}
 				]
 			})
 			const vm = new Vue({
